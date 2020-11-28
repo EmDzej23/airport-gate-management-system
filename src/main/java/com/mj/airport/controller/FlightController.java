@@ -7,6 +7,7 @@ package com.mj.airport.controller;
 
 import com.mj.airport.auth.Constants;
 import com.mj.airport.dto.AirplaneDto;
+import com.mj.airport.dto.FlightDto;
 import com.mj.airport.service.FlightService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +41,13 @@ public class FlightController {
     @ApiOperation(value = "Send POST request to create new flight based on airplane data", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity create(@ApiParam(value = "AirplaneDto model", required = true) @RequestBody @Valid AirplaneDto airplaneDto) {
         return flightService.create(airplaneDto);
+    }
+    
+    @PostMapping("/assign-gate")
+    @Secured(Constants.ADMIN)
+    @ApiOperation(value = "Send POST request to assign particuler gate to the flight", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
+    public ResponseEntity assignGate(@ApiParam(value = "FlightDto model", required = true) @RequestBody @Valid FlightDto flightDto) {
+        return flightService.assignFlightToGate(flightDto);
     }
     
 }

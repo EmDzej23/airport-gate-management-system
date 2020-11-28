@@ -33,7 +33,7 @@ public class FlightService {
     private AirplaneRepository airplaneRepository;
     @Autowired
     private ModelMapper mapper;
-    public GateDto assignFlightToGate(FlightDto dto) {
+    public ResponseEntity assignFlightToGate(FlightDto dto) {
         //find first available gate
         boolean isGateAvailable = isGateAvailable(dto);
         //if no gate is available return error message

@@ -39,9 +39,6 @@ public class Airplane implements Serializable {
     @Column(name = "model")
     private String model;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "airplane", cascade = CascadeType.ALL)
-    private List<Flight> flights;
-    
     
 
 }

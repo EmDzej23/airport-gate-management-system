@@ -5,7 +5,7 @@
  */
 package com.mj.airport.repository;
 
-import com.mj.airport.model.Flight;
+import com.mj.airport.model.Gate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,5 +14,6 @@ import org.springframework.stereotype.Repository;
  * @author marko
  */
 @Repository
-public interface FlightRepository extends JpaRepository<Flight, Long> {
+public interface GateRepository extends JpaRepository<Gate, Long> {
 }
+

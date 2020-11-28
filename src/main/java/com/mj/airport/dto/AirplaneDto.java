@@ -20,5 +20,4 @@ import lombok.NoArgsConstructor;
 public class AirplaneDto {
     private Long id;
     private String model;
-    private List<FlightDto> flights;
 }

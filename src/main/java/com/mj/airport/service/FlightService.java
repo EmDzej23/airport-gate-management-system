@@ -33,6 +33,7 @@ public class FlightService {
     private AirplaneRepository airplaneRepository;
     @Autowired
     private ModelMapper mapper;
+    
     public ResponseEntity assignFlightToGate(FlightDto dto) {
         //find first available gate
         boolean isGateAvailable = isGateAvailable(dto);
@@ -50,7 +51,6 @@ public class FlightService {
     
     public ResponseEntity create(AirplaneDto airplaneDto) {
         Airplane airplane = mapper.map(airplaneDto, Airplane.class);
-        System.out.println("airplane" +airplane);
         airplane = airplaneRepository.saveAndFlush(airplane);
         Flight flight = new Flight();
         flight.setAirplane(airplane);

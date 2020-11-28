@@ -36,7 +36,7 @@ public class Gate implements Serializable {
     @Column(name = "ID", unique = true)
     private Long id;
 
-    @Column(name = "number")
+    @Column(name = "number",unique = true)
     private String number;
     
     @Column(name = "available")

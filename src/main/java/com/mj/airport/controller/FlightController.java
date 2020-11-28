@@ -36,7 +36,7 @@ public class FlightController {
     @Autowired
     FlightService flightService;
     
-    @PostMapping("/create")
+    @PostMapping("/")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send POST request to create new flight based on airplane data", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity create(@ApiParam(value = "AirplaneDto model", required = true) @RequestBody @Valid AirplaneDto airplaneDto) {

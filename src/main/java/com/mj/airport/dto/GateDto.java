@@ -21,5 +21,4 @@ public class GateDto {
     private Long id;
     private String number;
     private boolean available;
-    private List<FlightDto> flights;
 }

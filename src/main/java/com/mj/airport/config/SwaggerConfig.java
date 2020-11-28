@@ -24,7 +24,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    private static final String CONTROLLER_PACKAGE = "com.mj.controller";
+    private static final String CONTROLLER_PACKAGE = "com.mj.airport.controller";
 
     @Bean
     public Docket api() {

@@ -36,7 +36,7 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final String[] AUTH_WHITELIST = {"/auth/login/**", "/swagger*/**", "/swagger-ui.html"};
+    private final String[] AUTH_WHITELIST = {"/auth/login/**", "/swagger*/**", "/swagger-ui.html", "/v2/api-docs", "/webjars/**"};
 
     @Autowired
     CustomUserDetailsService customUserDetailsService;

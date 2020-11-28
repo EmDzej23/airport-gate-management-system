@@ -21,6 +21,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -35,19 +36,19 @@ public class FlightController {
 
     @Autowired
     FlightService flightService;
-    
+
     @PostMapping("/")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send POST request to create new flight based on airplane data", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity create(@ApiParam(value = "AirplaneDto model", required = true) @RequestBody @Valid AirplaneDto airplaneDto) {
-        return flightService.create(airplaneDto);
+    public ResponseEntity create(@ApiParam(value = "AirplaneDto model", required = true) @RequestBody @Valid AirplaneDto airplaneDto, @ApiParam(value = "Flight number", required = true) @RequestParam @Valid String number) {
+        return flightService.create(airplaneDto, number);
     }
-    
+
     @PostMapping("/assign-gate")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send POST request to assign particuler gate to the flight", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity assignGate(@ApiParam(value = "FlightDto model", required = true) @RequestBody @Valid FlightDto flightDto) {
-        return flightService.assignFlightToGate(flightDto);
+    public ResponseEntity assignGate(@ApiParam(value = "Flight number", required = true) @RequestParam @Valid String number) {
+        return flightService.assignFlightToGate(number);
     }
-    
+
 }

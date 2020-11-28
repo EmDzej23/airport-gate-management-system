@@ -34,6 +34,10 @@ public class Flight implements Serializable {
     @Column(name = "ID", unique = true)
     private Long id;
 
+    
+    @Column(name = "number", unique = true)
+    private String number;
+    
     @ManyToOne
     @JoinColumn(name = "gate_id")
     private Gate gate;

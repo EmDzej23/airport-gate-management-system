@@ -36,13 +36,10 @@ public class Gate implements Serializable {
     @Column(name = "ID", unique = true)
     private Long id;
 
-    @Column(name = "number")
+    @Column(name = "number",unique = true)
     private String number;
     
     @Column(name = "available")
     private boolean available;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "gate", cascade = CascadeType.ALL)
-    private List<Flight> flights;
-
 }

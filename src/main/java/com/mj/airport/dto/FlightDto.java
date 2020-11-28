@@ -20,4 +20,5 @@ public class FlightDto {
     private Long id;
     private Long gate;
     private Long airplane;
+    private String number;
 }

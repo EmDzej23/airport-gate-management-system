@@ -42,4 +42,5 @@ public class Gate implements Serializable {
     @Column(name = "available")
     private boolean available;
     
+
 }

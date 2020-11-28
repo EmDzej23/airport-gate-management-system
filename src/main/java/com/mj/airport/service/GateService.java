@@ -5,9 +5,11 @@
  */
 package com.mj.airport.service;
 
+import com.mj.airport.dto.AvailabilityDto;
 import com.mj.airport.dto.GateDto;
-import com.mj.airport.dto.UserDto;
+import com.mj.airport.model.Availability;
 import com.mj.airport.model.Gate;
+import com.mj.airport.repository.AvailabilityRepository;
 import com.mj.airport.repository.GateRepository;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +31,8 @@ import org.springframework.stereotype.Service;
 public class GateService {
     @Autowired
     private GateRepository gateRepository;
+    @Autowired
+    private AvailabilityRepository availabilityRepository;
     @Autowired
     private ModelMapper mapper;
     
@@ -88,6 +92,39 @@ public class GateService {
     
     public ResponseEntity listAll() {
         List<Gate> gates = gateRepository.findAll();
-        return ResponseEntity.ok(gates.stream().map(company -> mapper.map(company, GateDto.class)).collect(Collectors.toList()));
+        return ResponseEntity.ok(gates.stream().map(gate -> mapper.map(gate, GateDto.class)).collect(Collectors.toList()));
     }
+    
+    public ResponseEntity listAllAvailabilities(Long gateId) {
+        List<Availability> availabilities = availabilityRepository.findByGateId(gateId);
+        return ResponseEntity.ok(availabilities.stream().map(availability -> mapper.map(availability, AvailabilityDto.class)).collect(Collectors.toList()));
+    }
+    
+    public ResponseEntity setAvailabilitiesForGate(List<AvailabilityDto> availabilities, Long gateId) {
+        Gate gate = gateRepository.findById(gateId).get();
+        availabilities.stream().forEach(availability -> {
+            Availability availabilityToAdd = mapper.map(availability, Availability.class);
+            availabilityToAdd.setGate(gate);
+            availabilityRepository.save(availabilityToAdd);
+        });
+        
+        return ResponseEntity.ok(mapper.map(gate, GateDto.class));
+    }
+    
+    public ResponseEntity updateAvailability(AvailabilityDto availability, Long availabilityId) {
+        Availability availabilityToUpdate = availabilityRepository.findById(availabilityId).get();
+        availabilityToUpdate.setEndTime(availability.getEndTime());
+        availabilityToUpdate.setStartTime(availability.getStartTime());
+        availabilityRepository.save(availabilityToUpdate);
+        
+        return ResponseEntity.ok(mapper.map(availabilityToUpdate, AvailabilityDto.class));
+    }
+    
+    public ResponseEntity deleteAvailabilities(Long gateId) {
+        availabilityRepository.deleteByGateId(gateId);
+        return ResponseEntity.ok("All availabilities deleted for gate: "+gateId);
+    }
+    
+    
+    
 }

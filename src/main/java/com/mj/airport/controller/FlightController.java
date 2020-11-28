@@ -7,7 +7,6 @@ package com.mj.airport.controller;
 
 import com.mj.airport.auth.Constants;
 import com.mj.airport.dto.AirplaneDto;
-import com.mj.airport.dto.FlightDto;
 import com.mj.airport.service.FlightService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

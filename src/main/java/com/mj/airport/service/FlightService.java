@@ -12,6 +12,7 @@ import com.mj.airport.model.Airplane;
 import com.mj.airport.model.Flight;
 import com.mj.airport.repository.AirplaneRepository;
 import com.mj.airport.repository.FlightRepository;
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -33,6 +34,14 @@ public class FlightService {
     private AirplaneRepository airplaneRepository;
     @Autowired
     private ModelMapper mapper;
+    
+    @PostConstruct
+    public void createInitFlight() {
+        log.info("creating initial gate 1");
+        AirplaneDto airplane = new AirplaneDto();
+        airplane.setModel("model1");
+        create(airplane);
+    }
     
     public ResponseEntity assignFlightToGate(FlightDto dto) {
         //find first available gate

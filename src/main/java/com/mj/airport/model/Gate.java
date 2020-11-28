@@ -42,7 +42,4 @@ public class Gate implements Serializable {
     @Column(name = "available")
     private boolean available;
     
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "gate", cascade = CascadeType.ALL)
-    private List<Flight> flights;
-
 }

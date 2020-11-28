@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration packages="rs.akredito">
+    <Properties>
+        <Property name="patternLayout">%d{yyyy-MM-dd HH:mm:ss.SSS} [%p] [%thread %X{X-UNIQUE-ID} %c{1.}.%L %highlight{%X{USER}} ]  - %highlight{%msg} %ex %n</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console-Appender" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>${patternLayout}</pattern>
+            </PatternLayout>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <logger name="springfox.documentation" level="warn" additivity="false">
+            <appender-ref ref="Console-Appender"/>
+        </logger>
+
+        <logger name="org.springframework.web.servlet.mvc.method.annotation" level="warn" additivity="false">
+            <appender-ref ref="Console-Appender"/>
+        </logger>
+        <logger name="log4jdbc.log4j2" level="info" additivity="false">
+            <MarkerFilter marker="LOG4JDBC_NON_STATEMENT" onMatch="DENY" onMismatch="NEUTRAL"/>
+            <appender-ref ref="Console-Appender"/>
+        </logger>
+
+        <Root level="info">
+            <AppenderRef ref="Console-Appender"/>
+        </Root>
+    </Loggers>
+</Configuration>

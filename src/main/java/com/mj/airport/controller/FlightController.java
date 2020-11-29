@@ -14,8 +14,10 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,6 +49,14 @@ public class FlightController {
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send POST request to assign particuler gate to the flight", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity assignGate(@ApiParam(value = "Flight number", required = true) @RequestParam @Valid String number) {
+        try {
+            return flightService.assignFlightToGate(number);
+        } catch (Exception e) {
+            if (e instanceof ObjectOptimisticLockingFailureException
+                    || e instanceof StaleObjectStateException) {
+                return flightService.assignFlightToGate(number);
+            }
+        }
         return flightService.assignFlightToGate(number);
     }
 

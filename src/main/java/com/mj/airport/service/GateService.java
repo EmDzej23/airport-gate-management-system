@@ -52,7 +52,7 @@ public class GateService {
         if (!gateRepository.findByNumber("2").isPresent()) {
             log.info("creating initial gate 2");
             Gate gate = new Gate();
-            gate.setAvailable(true);
+            gate.setAvailable(false);
             gate.setNumber("2");
             create(mapper.map(gate, GateDto.class));
         }
@@ -79,7 +79,7 @@ public class GateService {
     
     public ResponseEntity setGateAvailable(Long gateId, boolean available) {
         Gate gate = gateRepository.getOne(gateId);
-        //update gate
+        //update gate availability
         gate.setAvailable(available);
         
         gate = gateRepository.save(gate);

@@ -57,7 +57,7 @@ public class FlightService {
 
         log.info("creating initial flight number_11");
         AirplaneDto airplane2 = new AirplaneDto();
-        airplane2.setModel("number_11");
+        airplane2.setModel("model2");
 
         create(airplane2, "number_11");
     }

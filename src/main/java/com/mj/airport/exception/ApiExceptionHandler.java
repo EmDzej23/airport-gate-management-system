@@ -5,8 +5,6 @@
  */
 package com.mj.airport.exception;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.Arrays;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +28,10 @@ public class ApiExceptionHandler {
         BindingResult bindingResult = ex.getBindingResult();
         FieldError fieldError = bindingResult.getFieldError();
         String defaultMessage = fieldError.getDefaultMessage();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Arrays.asList(defaultMessage));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiErrorDto(
+                        HttpStatus.BAD_REQUEST.value(),
+                        defaultMessage
+                ));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -42,4 +43,6 @@ public class ApiExceptionHandler {
                         ex.getSQLException().getMessage()
                 ));
     }
+    
+    
 }

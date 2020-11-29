@@ -53,7 +53,7 @@ if successfull service will return JWT token
 hit Authorization button on swagger and fill it with "Bearer YOUR-TOKEN" and click authorize
 
 ## Data created by default on project start (using @PostConstruct in @Service layer):
-
+```
 - Airplanes: [{model:model1}, {model:model2}]
 - Flights: [{number:number_1, number:number_11}]
 - Gates: [{number:1,available:'t'}, {number:2,available:'f'}, {number:3,available:'f'}]
@@ -66,3 +66,4 @@ hit Authorization button on swagger and fill it with "Bearer YOUR-TOKEN" and cli
     - ]
    - )
 - User: [{username:'airport',password:'airport123'}]
+```

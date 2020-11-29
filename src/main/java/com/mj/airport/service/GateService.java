@@ -11,6 +11,7 @@ import com.mj.airport.model.Availability;
 import com.mj.airport.model.Gate;
 import com.mj.airport.repository.AvailabilityRepository;
 import com.mj.airport.repository.GateRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
@@ -124,6 +125,13 @@ public class GateService {
         availabilityRepository.deleteByGateId(gateId);
         return ResponseEntity.ok("All availabilities deleted for gate: "+gateId);
     }
+    
+    public ResponseEntity findAvailableGate() {
+        List<Gate> gates = gateRepository.findAvailableGate(LocalDateTime.now());
+        return ResponseEntity.ok(gates.stream().map(gate -> mapper.map(gate, GateDto.class)).collect(Collectors.toList()));
+    }
+    
+    
     
     
     

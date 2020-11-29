@@ -84,6 +84,13 @@ public class GateController {
         return gateService.deleteAvailabilities(gateId);
     }
     
+    @GetMapping("/available")
+    @Secured(Constants.ADMIN)
+    @ApiOperation(value = "Send GET request to fetch available gates", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
+    public ResponseEntity findAvailableGates() {
+        return gateService.findAvailableGate();
+    }
+    
     
 
 }

@@ -5,6 +5,7 @@
  */
 package com.mj.airport.dto;
 
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,8 @@ import lombok.NoArgsConstructor;
 public class FlightDto {
     private Long id;
     private Long gate;
+    @NotBlank(message = "Airplane reference id can not be empty")
     private Long airplane;
+    @NotBlank(message = "Flight number can not be empty")
     private String number;
 }

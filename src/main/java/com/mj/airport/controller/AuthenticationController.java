@@ -74,7 +74,7 @@ public class AuthenticationController {
 
         } catch (AuthenticationException e) {
             log.warn("Login failed with reason - " + e.getMessage());
-            return new ResponseEntity(Arrays.asList("error.user.empty"), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(Arrays.asList("User credentials can not be empty"), HttpStatus.BAD_REQUEST);
         }
     }
 

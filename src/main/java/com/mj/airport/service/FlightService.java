@@ -15,8 +15,6 @@ import com.mj.airport.repository.FlightRepository;
 import com.mj.airport.repository.GateRepository;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;

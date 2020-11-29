@@ -62,7 +62,7 @@ public class FlightService {
         Gate availableGate = findAvailableGate();
         //if no gate is available return error message
         if (availableGate == null) {
-            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(Arrays.asList("There is no available gate"));
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(Arrays.asList("Currently, there is no available gate. Please try later."));
         } //if available, assign gate to flight
         else {
             Flight flight = flightRepository.findByNumber(number).get();
@@ -91,7 +91,8 @@ public class FlightService {
     
     public Gate findAvailableGate() {
         Pageable pageable = PageRequest.of(0, 1);
-        Gate gate = gateRepository.findAvailableGate(LocalDateTime.now(),pageable).get().findFirst().get();
+        Gate gate = gateRepository.findAvailableGate(LocalDateTime.now(),pageable).get().findAny().orElse(null);
+        
         return gate;
     }
 }

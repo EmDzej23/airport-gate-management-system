@@ -5,7 +5,7 @@
  */
 package com.mj.airport.dto;
 
-import java.util.List;
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GateDto {
     private Long id;
+    @NotBlank(message = "Gate number can not be empty")
     private String number;
     private boolean available;
 }

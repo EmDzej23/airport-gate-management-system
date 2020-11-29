@@ -23,6 +23,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -104,11 +105,23 @@ public class GateService {
 
     public ResponseEntity setGateAvailable(Long gateId, boolean available) {
         Gate gate = gateRepository.getOne(gateId);
+
+        //It may be admin's mistake, but it may be that gate has just bean assingned to a gate, at similar time admin tried to set it as unavailable
+        if (gate.isAvailable() == available && !available) {
+            //Possible improvements: 
+            // - check if gate has assigned flight
+            // - unasign gate if we need it unavailable without flights
+            return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Gate status is the same. It may have just been updated to " + available + ". //Possible improvement scenarios in Readme");
+        }
         //update gate availability
         gate.setAvailable(available);
-
+        //simple test concurrency:
+//        try {
+//            Thread.sleep(8000);
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(GateService.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         gate = gateRepository.save(gate);
-        //return updatedGateDto
         return ResponseEntity.ok(mapper.map(gate, GateDto.class));
     }
 

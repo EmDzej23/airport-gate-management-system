@@ -19,6 +19,8 @@ import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -127,8 +129,9 @@ public class GateService {
     }
     
     public ResponseEntity findAvailableGate() {
-        List<Gate> gates = gateRepository.findAvailableGate(LocalDateTime.now());
-        return ResponseEntity.ok(gates.stream().map(gate -> mapper.map(gate, GateDto.class)).collect(Collectors.toList()));
+        Pageable pageable = PageRequest.of(0, 1);
+        Gate gate = gateRepository.findAvailableGate(LocalDateTime.now(),pageable).get().findFirst().get();
+        return ResponseEntity.ok(mapper.map(gate, GateDto.class));
     }
     
     

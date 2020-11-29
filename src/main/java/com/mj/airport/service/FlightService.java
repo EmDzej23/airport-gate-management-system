@@ -21,6 +21,8 @@ import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -33,6 +35,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 public class FlightService {
+
     @Autowired
     private FlightRepository flightRepository;
     @Autowired
@@ -41,36 +44,36 @@ public class FlightService {
     private GateRepository gateRepository;
     @Autowired
     private ModelMapper mapper;
-    
+
     @PostConstruct
     public void createInitFlight() {
-        log.info("creating initial gate 1");
+        if (flightRepository.findByNumber("number_1").isPresent()) {
+            return;
+        }
+        log.info("creating initial flight number_1");
         AirplaneDto airplane = new AirplaneDto();
         airplane.setModel("model1");
-        create(airplane,"number_1");
+
+        create(airplane, "number_1");
     }
-    
+
     public ResponseEntity assignFlightToGate(String number) {
         //find first available gate
         Gate availableGate = findAvailableGate();
         //if no gate is available return error message
-        if (availableGate==null) {
+        if (availableGate == null) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(Arrays.asList("There is no available gate"));
-        }
-        //if available, assign gate to flight
+        } //if available, assign gate to flight
         else {
             Flight flight = flightRepository.findByNumber(number).get();
             flight.setGate(availableGate);
             flight = flightRepository.saveAndFlush(flight);
+            availableGate.setAvailable(false);
+            gateRepository.saveAndFlush(availableGate);
             return ResponseEntity.ok(mapper.map(flight, FlightDto.class));
         }
     }
-    
-    public Gate findAvailableGate() {
-        //TODO: Add logic for checking gate availability
-        return gateRepository.findById(1l).get();
-    }
-    
+
     public ResponseEntity create(AirplaneDto airplaneDto, String number) {
         Flight flight = new Flight();
         flight.setAirplane(createAirplane(airplaneDto));
@@ -79,10 +82,16 @@ public class FlightService {
         flightRepository.saveAndFlush(flight);
         return ResponseEntity.ok(mapper.map(flight, FlightDto.class));
     }
-    
+
     public Airplane createAirplane(AirplaneDto airplaneDto) {
         Airplane airplane = mapper.map(airplaneDto, Airplane.class);
         airplane = airplaneRepository.saveAndFlush(airplane);
         return airplane;
+    }
+    
+    public Gate findAvailableGate() {
+        Pageable pageable = PageRequest.of(0, 1);
+        Gate gate = gateRepository.findAvailableGate(LocalDateTime.now(),pageable).get().findFirst().get();
+        return gate;
     }
 }

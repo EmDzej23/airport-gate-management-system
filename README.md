@@ -54,15 +54,15 @@ hit Authorization button on swagger and fill it with "Bearer YOUR-TOKEN" and cli
 
 ## Data created by default on project start (using @PostConstruct in @Service layer):
 
-Airplanes: [{model:model1}, {model:model2}]
-Flights: [{number:number_1, number:number_11}]
-Gates: [{number:1,available:'t'}, {number:2,available:'f'}, {number:3,available:'f'}]
-Availabilities
-(
- [
-  {start_time:'2020-11-29 09:00:00', end_time:'2020-11-29 10:00:00', gate_id:1},
-  {start_time:'2020-11-29 16:00:00', end_time:'2020-11-29 15:00:00', gate_id:1},
-  {start_time:'2020-11-29 17:35:00', end_time:'2022-11-29 20:00:00', gate_id:1}
- ]
-)
-User: [{username:'airport',password:'airport123'}]
+- Airplanes: [{model:model1}, {model:model2}]
+- Flights: [{number:number_1, number:number_11}]
+- Gates: [{number:1,available:'t'}, {number:2,available:'f'}, {number:3,available:'f'}]
+- Availabilities
+   - (
+    - [
+        - {start_time:'2020-11-29 09:00:00', end_time:'2020-11-29 10:00:00', gate_id:1},
+        - {start_time:'2020-11-29 16:00:00', end_time:'2020-11-29 15:00:00', gate_id:1},
+        - {start_time:'2020-11-29 17:35:00', end_time:'2022-11-29 20:00:00', gate_id:1}
+    - ]
+   - )
+- User: [{username:'airport',password:'airport123'}]

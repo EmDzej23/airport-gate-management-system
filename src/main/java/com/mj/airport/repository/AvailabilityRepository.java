@@ -3,6 +3,7 @@ package com.mj.airport.repository;
 import com.mj.airport.model.Availability;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -14,6 +15,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  *
  * @author marko
  */
+@Repository
 public interface AvailabilityRepository extends JpaRepository<Availability, Long> {
     List<Availability> findByGateId(Long id);
     void deleteByGateId(Long id);

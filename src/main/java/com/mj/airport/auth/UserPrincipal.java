@@ -1,6 +1,5 @@
 package com.mj.airport.auth;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mj.airport.model.User;
 
 import java.util.Arrays;
@@ -14,8 +13,6 @@ import java.util.Collection;
 import lombok.*;
 
 @Data
-@EqualsAndHashCode(of = "id")
-@ToString(of = "username")
 @AllArgsConstructor
 public class UserPrincipal implements UserDetails {
 

@@ -16,8 +16,10 @@ import io.swagger.annotations.Authorization;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +48,17 @@ public class GateController {
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send PUT request to set gate available", httpMethod = "PUT", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity update(@ApiParam(value = "Gate ID", required = true) @PathVariable Long id, @ApiParam(value = "Gate availability", required = true) @PathVariable boolean available) {
+        //Basic handle of possible concurent issue with pesimistic locking used
+        try {
+            return gateService.setGateAvailable(id, available);
+        } catch (Exception e) {
+            if (e instanceof ObjectOptimisticLockingFailureException
+                    || e instanceof StaleObjectStateException) {
+                return gateService.setGateAvailable(id, available);
+            }
+        }
         return gateService.setGateAvailable(id, available);
+        
     }
     
     @PostMapping("/")

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -33,6 +34,7 @@ import org.springframework.web.filter.CorsFilter;
  * @author marko
  */
 @Configuration
+@EnableRetry
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 

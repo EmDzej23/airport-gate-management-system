@@ -49,7 +49,7 @@ public class GateService {
         if (!gateRepository.findByNumber("1").isPresent()) {
             log.info("creating initial gate 1");
             Gate gate = new Gate();
-            gate.setAvailable(true);
+            gate.setAvailable(false);
             gate.setNumber("1");
             gate = createInitGate(mapper.map(gate, GateDto.class));
             Availability availability1 = new Availability();
@@ -72,14 +72,14 @@ public class GateService {
         if (!gateRepository.findByNumber("2").isPresent()) {
             log.info("creating initial gate 2");
             Gate gate = new Gate();
-            gate.setAvailable(false);
+            gate.setAvailable(true);
             gate.setNumber("2");
             createInitGate(mapper.map(gate, GateDto.class));
         }
         if (!gateRepository.findByNumber("3").isPresent()) {
             log.info("creating initial gate 3");
             Gate gate = new Gate();
-            gate.setAvailable(false);
+            gate.setAvailable(true);
             gate.setNumber("3");
             createInitGate(mapper.map(gate, GateDto.class));
         }

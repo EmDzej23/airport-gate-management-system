@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<Configuration status="debug">
+
+    <Appenders>
+        <Console name="Console-Appender" target="SYSTEM_OUT">
+            <PatternLayout>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%p] [%thread %X{request-id} %c{1.} - user id: %highlight{%X{user-id}}, username: %highlight{%X{user-name}}]  - %highlight{%msg} %ex %n</pattern>
+            </PatternLayout>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console-Appender"/>
+        </Root>
+    </Loggers>
+    
+</Configuration>

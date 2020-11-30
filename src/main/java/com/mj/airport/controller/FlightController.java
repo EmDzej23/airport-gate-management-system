@@ -57,9 +57,7 @@ public class FlightController {
     public ResponseEntity assignGate(@ApiParam(value = "Flight number", required = true) @RequestParam @Valid String number) {
         try {
             return flightService.assignFlightToGate(number).get();
-        } catch (InterruptedException ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Arrays.asList(ex.getMessage()));
-        } catch (ExecutionException ex) {
+        } catch (InterruptedException | ExecutionException ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Arrays.asList(ex.getMessage()));
         }
         

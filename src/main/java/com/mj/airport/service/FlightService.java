@@ -51,7 +51,7 @@ public class FlightService {
     private ModelMapper mapper;
 
     @PostConstruct
-    public void createInitFlight() {
+    public void createInitFlights() {
         if (flightRepository.findByNumber("number_1").isPresent() && flightRepository.findByNumber("number_11").isPresent()) {
             return;
         }

@@ -45,7 +45,7 @@ public class GateService {
 
     //Create init gates
     @PostConstruct
-    private void createInitialUser() {
+    private void createInitialGatesAndAvailabilities() {
         if (!gateRepository.findByNumber("1").isPresent()) {
             log.info("creating initial gate 1");
             Gate gate = new Gate();
@@ -115,12 +115,6 @@ public class GateService {
         }
         //update gate availability
         gate.setAvailable(available);
-        //simple test concurrency:
-//        try {
-//            Thread.sleep(8000);
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(GateService.class.getName()).log(Level.SEVERE, null, ex);
-//        }
         gate = gateRepository.save(gate);
         return ResponseEntity.ok(mapper.map(gate, GateDto.class));
     }

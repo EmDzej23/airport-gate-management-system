@@ -48,7 +48,7 @@ public class GateController {
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send PUT request to set gate available", httpMethod = "PUT", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity update(@ApiParam(value = "Gate ID", required = true) @PathVariable Long id, @ApiParam(value = "Gate availability", required = true) @PathVariable boolean available) {
-        //Basic handle of possible concurent issue with pesimistic locking used
+        //Basic handle of possible concurent issue with optimistic locking used
         try {
             return gateService.setGateAvailable(id, available);
         } catch (Exception e) {
@@ -78,13 +78,13 @@ public class GateController {
     @GetMapping("/{id}/availabilities")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send GET request to fetch all availabilities for gate", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity findAvailabilitiesForGate(@ApiParam(value = "GateDto model", required = true) @RequestParam @Valid Long gateId) {
+    public ResponseEntity findAvailabilitiesForGate(@ApiParam(value = "Gate number", required = true) @RequestParam @Valid Long gateId) {
         return gateService.listAllAvailabilities(gateId);
     }
     
-    @PostMapping("/setAvailabilities")
+    @PostMapping("/addAvailability")
     @Secured(Constants.ADMIN)
-    @ApiOperation(value = "Send POST request to add time availabilities to gate", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
+    @ApiOperation(value = "Send POST request to add time availability to gate", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity setAvailabilities(@ApiParam(value = "AvailabilityDto model", required = true) @RequestBody @Valid List<AvailabilityDto> availabilityDtos, @ApiParam(value = "Gate id", required = true) @RequestParam @Valid Long gateId) {
         return gateService.setAvailabilitiesForGate(availabilityDtos, gateId);
     }
@@ -98,8 +98,8 @@ public class GateController {
     
     @GetMapping("/available")
     @Secured(Constants.ADMIN)
-    @ApiOperation(value = "Send GET request to fetch available gates", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity findAvailableGates() {
+    @ApiOperation(value = "Send GET request to fetch first available gate", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
+    public ResponseEntity findAvailableGate() {
         return gateService.findAvailableGate();
     }
     

@@ -36,8 +36,11 @@ public class FlightControllerTest extends ControllerTest {
         final ExecutorService executor = Executors.newFixedThreadPool(flightNumbers.length);
 
         //given
+        
         //3 flights, and only 2 available gates
+        
         //when
+        
         //we assign 2 of 3
         for (final String flightNumber : flightNumbers) {
             executor.execute(() -> {
@@ -53,7 +56,8 @@ public class FlightControllerTest extends ControllerTest {
         executor.awaitTermination(1, TimeUnit.MINUTES);
 
         //then
-        //we expect info message:
+        
+        //we expect info messages:
         ResponseEntity r1;
         try {
             r1 = flightService.assignFlightToGate("number_111").get();

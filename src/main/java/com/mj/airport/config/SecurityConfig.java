@@ -34,7 +34,6 @@ import org.springframework.web.filter.CorsFilter;
  * @author marko
  */
 @Configuration
-@EnableRetry
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 

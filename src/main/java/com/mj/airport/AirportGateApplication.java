@@ -2,6 +2,7 @@ package com.mj.airport;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

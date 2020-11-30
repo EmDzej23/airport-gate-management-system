@@ -12,12 +12,18 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
+import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,14 +56,13 @@ public class FlightController {
     @ApiOperation(value = "Send POST request to assign particuler gate to the flight", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity assignGate(@ApiParam(value = "Flight number", required = true) @RequestParam @Valid String number) {
         try {
-            return flightService.assignFlightToGate(number);
-        } catch (Exception e) {
-            if (e instanceof ObjectOptimisticLockingFailureException
-                    || e instanceof StaleObjectStateException) {
-                return flightService.assignFlightToGate(number);
-            }
+            return flightService.assignFlightToGate(number).get();
+        } catch (InterruptedException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Arrays.asList(ex.getMessage()));
+        } catch (ExecutionException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Arrays.asList(ex.getMessage()));
         }
-        return flightService.assignFlightToGate(number);
+        
     }
 
 }

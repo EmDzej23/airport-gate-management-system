@@ -49,6 +49,7 @@ public class GateController {
     @ApiOperation(value = "Send PUT request to set gate available", httpMethod = "PUT", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity update(@ApiParam(value = "Gate ID", required = true) @PathVariable Long id, @ApiParam(value = "Gate availability", required = true) @PathVariable boolean available) {
         //Basic handle of possible concurent issue with optimistic locking used
+        //Could use Retryable on service method, or introduce pessimistic locking and additional handling
         try {
             return gateService.setGateAvailable(id, available);
         } catch (Exception e) {
@@ -84,9 +85,9 @@ public class GateController {
     
     @PostMapping("/addAvailability")
     @Secured(Constants.ADMIN)
-    @ApiOperation(value = "Send POST request to add time availability to gate", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity setAvailabilities(@ApiParam(value = "AvailabilityDto model", required = true) @RequestBody @Valid List<AvailabilityDto> availabilityDtos, @ApiParam(value = "Gate id", required = true) @RequestParam @Valid Long gateId) {
-        return gateService.setAvailabilitiesForGate(availabilityDtos, gateId);
+    @ApiOperation(value = "Send POST request to add time availabilities to gate", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
+    public ResponseEntity insertAvailabilities(@ApiParam(value = "AvailabilityDto model", required = true) @RequestBody @Valid List<AvailabilityDto> availabilityDtos, @ApiParam(value = "Gate id", required = true) @RequestParam @Valid Long gateId) {
+        return gateService.insertAvailabilitiesForGate(availabilityDtos, gateId);
     }
     
     @DeleteMapping("/clearAvailability")

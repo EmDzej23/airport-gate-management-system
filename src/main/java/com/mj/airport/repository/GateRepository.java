@@ -23,7 +23,14 @@ import org.springframework.stereotype.Repository;
 public interface GateRepository extends JpaRepository<Gate, Long> {
 
     Optional<Gate> findByNumber(String number);
-
+    
+    //Query for fetching available gate(s)
+    //Gate is available if:
+    ////Availability field is true
+    //AND
+    ////Flight time (in this app current request time on server) is between at least ONE of the gate's availabilities start and end times
+    ///OR
+    ////Availabilities are not defined for this gate
     @Query("SELECT distinct g FROM Gate g LEFT JOIN Availability a "
             + "ON g.id = a.gate.id WHERE g.available = TRUE "
             + "AND ("

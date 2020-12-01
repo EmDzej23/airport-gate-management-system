@@ -34,7 +34,5 @@ public class Airplane implements Serializable {
 
     @Column(name = "model")
     private String model;
-    
-    
 
 }

@@ -8,6 +8,7 @@ package com.mj.airport.controller;
 import com.mj.airport.auth.Constants;
 import com.mj.airport.dto.AvailabilityDto;
 import com.mj.airport.dto.GateDto;
+import com.mj.airport.exception.AvailabilityBadTimesException;
 import com.mj.airport.service.GateService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -98,7 +99,7 @@ public class GateController {
     @PostMapping("/addAvailability")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send POST request to add time availabilities to gate", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity insertAvailabilities(@ApiParam(value = "AvailabilityDto model", required = true) @RequestBody @Valid List<AvailabilityDto> availabilityDtos, @ApiParam(value = "Gate id", required = true) @RequestParam @Valid Long gateId) {
+    public ResponseEntity insertAvailabilities(@ApiParam(value = "AvailabilityDto model", required = true) @RequestBody @Valid List<AvailabilityDto> availabilityDtos, @ApiParam(value = "Gate id", required = true) @RequestParam @Valid Long gateId) throws AvailabilityBadTimesException {
         return gateService.insertAvailabilitiesForGate(availabilityDtos, gateId);
     }
     

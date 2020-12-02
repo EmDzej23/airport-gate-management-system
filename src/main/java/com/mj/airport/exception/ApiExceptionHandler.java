@@ -59,4 +59,14 @@ public class ApiExceptionHandler {
                         ex.getMessage()
                 ));
     }
+    
+    @ExceptionHandler(AvailabilityBadTimesException.class)
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity handleAvailabilityBadTimesException(AvailabilityBadTimesException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ApiErrorDto(
+                        HttpStatus.BAD_REQUEST.value(),
+                        ex.getMessage()
+                ));
+    }
 }

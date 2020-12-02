@@ -13,6 +13,7 @@ import com.mj.airport.model.Gate;
 import com.mj.airport.repository.AirplaneRepository;
 import com.mj.airport.repository.FlightRepository;
 import com.mj.airport.repository.GateRepository;
+import com.sun.xml.internal.ws.util.CompletedFuture;
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
 import javax.annotation.PostConstruct;
@@ -37,15 +38,14 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class FlightService {
-    
+
     /*
     In service layer I return ResponseEntity on every method.
     I believe this is not the best solution.
     I wanted to avoid ANY logic inside controllers, so that is the main reason.
     In real system, I would probably create abstract service or interface(s) along
     with the CustomDto containing e.g. concrete dto, response type and message.
-    */
-
+     */
     @Autowired
     private FlightRepository flightRepository;
     @Autowired
@@ -72,7 +72,7 @@ public class FlightService {
         airplane2.setModel("model2");
 
         create(airplane2, "number_11");
-        
+
         log.info("creating initial flight number_111");
         AirplaneDto airplane3 = new AirplaneDto();
         airplane3.setModel("model3");
@@ -91,7 +91,7 @@ public class FlightService {
     //This method is async since we want to enable users access it parallel, this service is most important in this demo
     @Retryable(value = {ObjectOptimisticLockingFailureException.class, StaleObjectStateException.class})
     @Transactional(rollbackOn = {StaleObjectStateException.class}, value = Transactional.TxType.REQUIRES_NEW)
-    @Async
+    @Async("taskExecutor")
     public CompletableFuture<ResponseEntity> assignFlightToGate(String number) {
 
         Flight flight = getFlightByNumber(number);
@@ -114,7 +114,7 @@ public class FlightService {
             return ResponseEntity.ok(mapper.map(flight, FlightDto.class));
         }
     }
-    
+
     //Search for the available gate based on 'available' boolean field and availability table rows
     //Get only 1 - first gate that is available (here we want to get the locking exception, and not allow different users to assign same gate)
     public Gate findAvailableGate() {
@@ -139,16 +139,15 @@ public class FlightService {
 
     //Insert new flight in database, along with the plane
     //One plane can have multiple flights so it is better to divide them
+    @Async("taskExecutor")
     @Transactional
-    public ResponseEntity create(AirplaneDto airplaneDto, String number) {
+    public CompletableFuture<ResponseEntity> create(AirplaneDto airplaneDto, String number) {
         Flight flight = new Flight();
         flight.setAirplane(createAirplane(airplaneDto));
         flight.setNumber(number);
         flight.setGate(null);
         flightRepository.saveAndFlush(flight);
-
-        return ResponseEntity.ok(mapper.map(flight, FlightDto.class
-        ));
+        return CompletableFuture.completedFuture(ResponseEntity.ok(mapper.map(flight, FlightDto.class)));
     }
 
     //Airplane can be created seperately
@@ -160,5 +159,4 @@ public class FlightService {
         return airplane;
     }
 
-    
 }

@@ -13,6 +13,7 @@ import com.mj.airport.repository.AvailabilityRepository;
 import com.mj.airport.repository.GateRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -23,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -100,7 +102,8 @@ public class GateService {
     }
 
     //update gate
-    public ResponseEntity update(GateDto dto) {
+    @Async("taskExecutor")
+    public CompletableFuture<ResponseEntity> update(GateDto dto) {
         Gate gate = gateRepository.getOne(dto.getId());
         //update gate
         gate.setAvailable(dto.isAvailable());
@@ -109,10 +112,10 @@ public class GateService {
         gate = gateRepository.save(gate);
         
         //return updatedGateDto
-        return ResponseEntity.ok(mapper.map(gate, GateDto.class));
+        return CompletableFuture.completedFuture(ResponseEntity.ok(mapper.map(gate, GateDto.class)));
     }
 
-    //Update gate's availability
+    //Update gate's availability async
     public ResponseEntity setGateAvailable(Long gateId, boolean available) {
         Gate gate = gateRepository.getOne(gateId);
 
@@ -138,17 +141,19 @@ public class GateService {
 
     //List all gates from the database
     //In a real system it should be pageable with skip and page fields
-    public ResponseEntity listAll() {
+    @Async("taskExecutor")
+    public CompletableFuture<ResponseEntity> listAll() {
         List<Gate> gates = gateRepository.findAll();
-        return ResponseEntity.ok(gates.stream().map(gate -> mapper.map(gate, GateDto.class)).collect(Collectors.toList()));
+        return CompletableFuture.completedFuture(ResponseEntity.ok(gates.stream().map(gate -> mapper.map(gate, GateDto.class)).collect(Collectors.toList())));
     }
 
     //List all availabilities for specific gate
     //Gate availability is the time gate is available at (start and end time)
     //Here we have a list of start times and end times for one gate
-    public ResponseEntity listAllAvailabilities(Long gateId) {
+    @Async("taskExecutor")
+    public CompletableFuture<ResponseEntity> listAllAvailabilities(Long gateId) {
         List<Availability> availabilities = availabilityRepository.findByGateId(gateId);
-        return ResponseEntity.ok(availabilities.stream().map(availability -> mapper.map(availability, AvailabilityDto.class)).collect(Collectors.toList()));
+        return CompletableFuture.completedFuture(ResponseEntity.ok(availabilities.stream().map(availability -> mapper.map(availability, AvailabilityDto.class)).collect(Collectors.toList())));
     }
 
     //Here we enter a list of availabilities for a gate

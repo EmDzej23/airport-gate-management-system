@@ -14,6 +14,8 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +45,11 @@ public class FlightController {
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send POST request to create new flight based on airplane data", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity create(@ApiParam(value = "AirplaneDto model", required = true) @RequestBody @Valid AirplaneDto airplaneDto, @ApiParam(value = "Flight number", required = true) @RequestParam @Valid String number) {
-        return flightService.create(airplaneDto, number);
+        try {
+            return flightService.create(airplaneDto, number).get();
+        } catch (InterruptedException | ExecutionException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
     }
 
     @PostMapping("/assign-gate")
@@ -53,7 +59,7 @@ public class FlightController {
         try {
             return flightService.assignFlightToGate(number).get();
         } catch (InterruptedException | ExecutionException ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Arrays.asList(ex.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
         }
         
     }

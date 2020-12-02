@@ -14,10 +14,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.annotation.Secured;
@@ -73,14 +77,22 @@ public class GateController {
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send GET request to fetch all gates", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity findAll() {
-        return gateService.listAll();
+        try {
+            return gateService.listAll().get();
+        } catch (InterruptedException | ExecutionException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
     }
     
     @GetMapping("/{id}/availabilities")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send GET request to fetch all availabilities for gate", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity findAvailabilitiesForGate(@ApiParam(value = "Gate number", required = true) @RequestParam @Valid Long gateId) {
-        return gateService.listAllAvailabilities(gateId);
+        try {
+            return gateService.listAllAvailabilities(gateId).get();
+        } catch (InterruptedException | ExecutionException ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        }
     }
     
     @PostMapping("/addAvailability")

@@ -36,7 +36,7 @@ database entities:
 
 checkout project with git clone...
 
-./mvnw clean install
+mvn clean install
 
 ./mvnw spring-boot:run
 

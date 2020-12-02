@@ -6,7 +6,9 @@
 package com.mj.airport.service;
 
 import com.mj.airport.dto.AvailabilityDto;
+import com.mj.airport.dto.GateAvailabilityDto;
 import com.mj.airport.dto.GateDto;
+import com.mj.airport.exception.AvailabilityBadTimesException;
 import com.mj.airport.model.Availability;
 import com.mj.airport.model.Gate;
 import com.mj.airport.repository.AvailabilityRepository;
@@ -162,15 +164,26 @@ public class GateService {
     ////check if start time is after end time
     ////check if start time is after today
     ////check if there are flights reservations prepared in time we are setting
-    public ResponseEntity insertAvailabilitiesForGate(List<AvailabilityDto> availabilities, Long gateId) {
+    public ResponseEntity insertAvailabilitiesForGate(List<AvailabilityDto> availabilities, Long gateId) throws AvailabilityBadTimesException {
         Gate gate = gateRepository.findById(gateId).get();
+        if (availabilities.stream().anyMatch(availability->availability.getStartTime().isBefore(availability.getEndTime()))) {
+            throw new AvailabilityBadTimesException();
+        }
         availabilities.stream().forEach(availability -> {
             Availability availabilityToAdd = mapper.map(availability, Availability.class);
             availabilityToAdd.setGate(gate);
             availabilityRepository.save(availabilityToAdd);
         });
-
-        return ResponseEntity.ok(mapper.map(gate, GateDto.class));
+        
+        //Not good solution for real system, this kind of mapping should be more automatic
+        //This is only the demo for how we can return custom GateAvailabilityDto
+        List<Availability> savedAvailabilities = availabilityRepository.findByGateId(gateId);
+        List<AvailabilityDto> savedAvailabilitiesDto = savedAvailabilities.stream().map(availability -> mapper.map(availability, AvailabilityDto.class)).collect(Collectors.toList());
+        GateAvailabilityDto responseDto = new GateAvailabilityDto();
+        responseDto.setGateDto(mapper.map(gate, GateDto.class));
+        responseDto.setAvailabilities(savedAvailabilitiesDto);
+        
+        return ResponseEntity.ok(responseDto);
     }
 
     //update availability based on its id

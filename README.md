@@ -82,3 +82,77 @@ hit Authorization button on swagger and fill it with "Bearer YOUR-TOKEN" and cli
    - )
 - User: [{username:'airport',password:'airport123'}]
 ```
+
+## Project structure
+
+Configuration:
+- Auth: define rules for user login using jwt
+- Config: app configuration
+- Exception: global exception handle
+Api:
+- Controller
+Logic:
+- Service
+Data:
+- Dto
+- ModelMapper
+- Repo + Model
+
+## User roles:
+
+- Admin
+
+## Use cases
+
+*Before user is logged in*
+
+- Authentication using jwt: login and logout
+
+*After user is logged in*
+
+- Create new airplane with new flight number
+- Assign flight to specific gate
+- Fetch all gates
+- Create new gate
+- Fetch all time availabilities for specific gate (by gate id)
+- Update gate availability (true or false)
+- Add list of availabilities (start and end times) for gate
+- Fetch first available gate
+- Clear all availabilities for specific gate
+
+## Data integrity
+
+Optimistic locking used.
+After one of data integrity exceptions is thrown that specific request will be repeated.
+
+Alternatives to achieve this would be:
+- Creating more complex logic for data collision and exception handling
+- Using pessimistic locking 
+
+## Multithreading
+
+- Async is enabled in project
+- Custom taskExecutor is specified
+- Async calls to some main service methods are enabled
+- Main use case of assigning gate to flight is tested using ExecutorService
+
+## Possible logic and code improvements
+
+- Create abstract service or interface(s)
+- Add date field to flight entity
+- Add offset field to flight date, before and after flight time needed for plane to be there or
+- automatically enter specific before and after availability when assigning a flight
+- Update gate to unavailable and cancel assign automatically, if before offset time
+- Create sql scripts instead of postConstruct improvement
+- Make secret id more secret, use external service, oauth2 for example
+
+## Tests
+
+- Created 7 unit tests for some of the main app features
+
+## Time spent on this project
+
+- Development: 12-14h
+- Analysis, improvements, bug fix: 4-6h
+- Write description: 2-3h
+- Write tests: 2-3h

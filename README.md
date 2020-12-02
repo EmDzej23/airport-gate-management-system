@@ -6,7 +6,9 @@
 
 ## Setup database
 
-In this project object-relational database system postgresql is used as a db management system
+In this project object-relational database systems postgresql or mysql can be used as a db management system
+
+If you choose postgresql (default in application.properties):
 
 After installing psql server and enabling access in pg conf:
 
@@ -22,6 +24,19 @@ ALTER ROLE airport WITH LOGIN;
 
 
 *future logins to airport database:*
+
+If you choose mysql:
+
+After installing mysql server:
+
+mysql -u root -p
+```
+CREATE USER 'airport' IDENTIFIED BY 'airport';
+CREATE database airport;
+GRANT ALL PRIVILEGES ON airport.* to 'airport';
+```
+
+*logout*
 
 psql -U airport
 

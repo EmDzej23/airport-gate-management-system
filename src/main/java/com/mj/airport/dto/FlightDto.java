@@ -5,6 +5,7 @@
  */
 package com.mj.airport.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FlightDto {
+    @ApiModelProperty(hidden = true)
     private Long id;
     private Long gate;
     @NotBlank(message = "Airplane reference id can not be empty")

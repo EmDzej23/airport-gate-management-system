@@ -34,7 +34,6 @@ import org.springframework.web.filter.CorsFilter;
  * @author marko
  */
 @Configuration
-@EnableRetry
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -84,7 +83,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated().and()
                 .addFilterBefore(corsFilter(), ChannelProcessingFilter.class);
 
-        // Add our custom JWT security filter
+        // Add a custom JWT security filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 

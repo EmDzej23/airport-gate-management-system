@@ -14,10 +14,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.StaleObjectStateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.annotation.Secured;
@@ -48,7 +52,8 @@ public class GateController {
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send PUT request to set gate available", httpMethod = "PUT", code = 200, authorizations = @Authorization(value = "Authorization"))
     public ResponseEntity update(@ApiParam(value = "Gate ID", required = true) @PathVariable Long id, @ApiParam(value = "Gate availability", required = true) @PathVariable boolean available) {
-        //Basic handle of possible concurent issue with pesimistic locking used
+        //Basic handle of possible concurent issue with optimistic locking used
+        //Could use Retryable on service method, or introduce pessimistic locking and additional handling
         try {
             return gateService.setGateAvailable(id, available);
         } catch (Exception e) {
@@ -71,22 +76,30 @@ public class GateController {
     @GetMapping("/")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send GET request to fetch all gates", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity findAll() {
-        return gateService.listAll();
+    public ResponseEntity findAll() throws Throwable {
+        try {
+            return gateService.listAll().get();
+        } catch (InterruptedException | ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
     
     @GetMapping("/{id}/availabilities")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send GET request to fetch all availabilities for gate", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity findAvailabilitiesForGate(@ApiParam(value = "GateDto model", required = true) @RequestParam @Valid Long gateId) {
-        return gateService.listAllAvailabilities(gateId);
+    public ResponseEntity findAvailabilitiesForGate(@ApiParam(value = "Gate number", required = true) @RequestParam @Valid Long gateId) throws Throwable {
+        try {
+            return gateService.listAllAvailabilities(gateId).get();
+        } catch (InterruptedException | ExecutionException ex) {
+            throw ex.getCause();
+        }
     }
     
-    @PostMapping("/setAvailabilities")
+    @PostMapping("/addAvailability")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send POST request to add time availabilities to gate", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity setAvailabilities(@ApiParam(value = "AvailabilityDto model", required = true) @RequestBody @Valid List<AvailabilityDto> availabilityDtos, @ApiParam(value = "Gate id", required = true) @RequestParam @Valid Long gateId) {
-        return gateService.setAvailabilitiesForGate(availabilityDtos, gateId);
+    public ResponseEntity insertAvailabilities(@ApiParam(value = "AvailabilityDto model", required = true) @RequestBody @Valid List<AvailabilityDto> availabilityDtos, @ApiParam(value = "Gate id", required = true) @RequestParam @Valid Long gateId) {
+        return gateService.insertAvailabilitiesForGate(availabilityDtos, gateId);
     }
     
     @DeleteMapping("/clearAvailability")
@@ -98,8 +111,8 @@ public class GateController {
     
     @GetMapping("/available")
     @Secured(Constants.ADMIN)
-    @ApiOperation(value = "Send GET request to fetch available gates", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity findAvailableGates() {
+    @ApiOperation(value = "Send GET request to fetch first available gate", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
+    public ResponseEntity findAvailableGate() {
         return gateService.findAvailableGate();
     }
     

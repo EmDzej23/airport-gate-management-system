@@ -13,8 +13,7 @@ import com.mj.airport.repository.AvailabilityRepository;
 import com.mj.airport.repository.GateRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -25,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,6 +35,14 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 public class GateService {
+    
+    /*
+    In service layer I return ResponseEntity on every method.
+    I believe this is not the best solution.
+    I wanted to avoid ANY logic inside controllers, so that is the main reason.
+    In real system, I would probably create abstract service or interface(s) along
+    with the CustomDto containing e.g. concrete dto, response type and message.
+    */
 
     @Autowired
     private GateRepository gateRepository;
@@ -43,9 +51,9 @@ public class GateService {
     @Autowired
     private ModelMapper mapper;
 
-    //Create init gates
+    //Started data init
     @PostConstruct
-    private void createInitialUser() {
+    private void createInitialGatesAndAvailabilities() {
         if (!gateRepository.findByNumber("1").isPresent()) {
             log.info("creating initial gate 1");
             Gate gate = new Gate();
@@ -86,23 +94,28 @@ public class GateService {
 
     }
 
+    //starter data
     public Gate createInitGate(GateDto gateDto) {
         Gate gate = mapper.map(gateDto, Gate.class);
         gate = gateRepository.saveAndFlush(gate);
         return gate;
     }
 
-    public ResponseEntity update(GateDto dto) {
+    //update gate
+    @Async("taskExecutor")
+    public CompletableFuture<ResponseEntity> update(GateDto dto) {
         Gate gate = gateRepository.getOne(dto.getId());
         //update gate
         gate.setAvailable(dto.isAvailable());
         gate.setNumber(dto.getNumber());
 
         gate = gateRepository.save(gate);
+        
         //return updatedGateDto
-        return ResponseEntity.ok(mapper.map(gate, GateDto.class));
+        return CompletableFuture.completedFuture(ResponseEntity.ok(mapper.map(gate, GateDto.class)));
     }
 
+    //Update gate's availability async
     public ResponseEntity setGateAvailable(Long gateId, boolean available) {
         Gate gate = gateRepository.getOne(gateId);
 
@@ -115,33 +128,41 @@ public class GateService {
         }
         //update gate availability
         gate.setAvailable(available);
-        //simple test concurrency:
-//        try {
-//            Thread.sleep(8000);
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(GateService.class.getName()).log(Level.SEVERE, null, ex);
-//        }
         gate = gateRepository.save(gate);
         return ResponseEntity.ok(mapper.map(gate, GateDto.class));
     }
 
+    //Create gate
     public ResponseEntity create(GateDto gateDto) {
         Gate gate = mapper.map(gateDto, Gate.class);
         gate = gateRepository.saveAndFlush(gate);
         return ResponseEntity.ok(mapper.map(gate, GateDto.class));
     }
 
-    public ResponseEntity listAll() {
+    //List all gates from the database
+    //In a real system it should be pageable with skip and page fields
+    @Async("taskExecutor")
+    public CompletableFuture<ResponseEntity> listAll() {
         List<Gate> gates = gateRepository.findAll();
-        return ResponseEntity.ok(gates.stream().map(gate -> mapper.map(gate, GateDto.class)).collect(Collectors.toList()));
+        return CompletableFuture.completedFuture(ResponseEntity.ok(gates.stream().map(gate -> mapper.map(gate, GateDto.class)).collect(Collectors.toList())));
     }
 
-    public ResponseEntity listAllAvailabilities(Long gateId) {
+    //List all availabilities for specific gate
+    //Gate availability is the time gate is available at (start and end time)
+    //Here we have a list of start times and end times for one gate
+    @Async("taskExecutor")
+    public CompletableFuture<ResponseEntity> listAllAvailabilities(Long gateId) {
         List<Availability> availabilities = availabilityRepository.findByGateId(gateId);
-        return ResponseEntity.ok(availabilities.stream().map(availability -> mapper.map(availability, AvailabilityDto.class)).collect(Collectors.toList()));
+        return CompletableFuture.completedFuture(ResponseEntity.ok(availabilities.stream().map(availability -> mapper.map(availability, AvailabilityDto.class)).collect(Collectors.toList())));
     }
 
-    public ResponseEntity setAvailabilitiesForGate(List<AvailabilityDto> availabilities, Long gateId) {
+    //Here we enter a list of availabilities for a gate
+    //Some possible checks in a real system:
+    ////check if entered start and end times are between existing ones
+    ////check if start time is after end time
+    ////check if start time is after today
+    ////check if there are flights reservations prepared in time we are setting
+    public ResponseEntity insertAvailabilitiesForGate(List<AvailabilityDto> availabilities, Long gateId) {
         Gate gate = gateRepository.findById(gateId).get();
         availabilities.stream().forEach(availability -> {
             Availability availabilityToAdd = mapper.map(availability, Availability.class);
@@ -152,6 +173,7 @@ public class GateService {
         return ResponseEntity.ok(mapper.map(gate, GateDto.class));
     }
 
+    //update availability based on its id
     public ResponseEntity updateAvailability(AvailabilityDto availability, Long availabilityId) {
         Availability availabilityToUpdate = availabilityRepository.findById(availabilityId).get();
         availabilityToUpdate.setEndTime(availability.getEndTime());
@@ -161,11 +183,13 @@ public class GateService {
         return ResponseEntity.ok(mapper.map(availabilityToUpdate, AvailabilityDto.class));
     }
 
+    //clear all availabilities for a gate
     public ResponseEntity deleteAvailabilities(Long gateId) {
         availabilityRepository.deleteByGateId(gateId);
         return ResponseEntity.ok("All availabilities deleted for gate: " + gateId);
     }
 
+    //show available gate (same method as in flight service, here used only for swagger)
     public ResponseEntity findAvailableGate() {
         Pageable pageable = PageRequest.of(0, 1);
         Gate gate = gateRepository.findAvailableGate(LocalDateTime.now(), pageable).get().findFirst().orElse(null);

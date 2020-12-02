@@ -32,7 +32,7 @@ public class UserService {
     @Autowired
     private ModelMapper mapper;
 
-    //Create init user with username airport
+    //Started data init
     @PostConstruct
     private void createInitialUser() {
         if (userRepository.findByUsername("airport").isPresent()) return;

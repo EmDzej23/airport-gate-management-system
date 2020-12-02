@@ -35,8 +35,6 @@ public class AvailabilityController {
 
     @Autowired
     GateService gateService;
-
-     
     
     @PutMapping("/update")
     @Secured(Constants.ADMIN)

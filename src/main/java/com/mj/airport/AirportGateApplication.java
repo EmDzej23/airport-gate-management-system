@@ -2,7 +2,7 @@ package com.mj.airport;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.retry.annotation.EnableRetry;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @author marko
  */
 @SpringBootApplication
+@EnableRetry
 public class AirportGateApplication {
     //main
     public static void main(String[] args) {

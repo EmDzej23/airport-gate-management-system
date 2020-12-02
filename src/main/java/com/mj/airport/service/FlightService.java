@@ -13,9 +13,10 @@ import com.mj.airport.model.Gate;
 import com.mj.airport.repository.AirplaneRepository;
 import com.mj.airport.repository.FlightRepository;
 import com.mj.airport.repository.GateRepository;
-import com.sun.xml.internal.ws.util.CompletedFuture;
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -105,6 +106,11 @@ public class FlightService {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Gate is already assigned to this flight.");
         }
         Gate availableGate = findAvailableGate();
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(FlightService.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         //if no gate is available return error message
         if (availableGate == null) {
             return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body("Currently, there is no available gate. Please try later.");

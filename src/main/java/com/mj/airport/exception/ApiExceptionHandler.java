@@ -10,6 +10,7 @@ import javax.persistence.PersistenceException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -26,9 +27,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @Slf4j
 @ControllerAdvice
 public class ApiExceptionHandler {
-
-    @Autowired
-    FlightService service;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
@@ -48,7 +46,7 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ApiErrorDto(
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        ex.getSQLException().getMessage()
+                        ex.getSQLException().getLocalizedMessage()
                 ));
     }
 

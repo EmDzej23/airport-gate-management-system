@@ -76,22 +76,22 @@ public class GateController {
     @GetMapping("/")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send GET request to fetch all gates", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity findAll() {
+    public ResponseEntity findAll() throws Throwable {
         try {
             return gateService.listAll().get();
         } catch (InterruptedException | ExecutionException ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+            throw ex.getCause();
         }
     }
     
     @GetMapping("/{id}/availabilities")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send GET request to fetch all availabilities for gate", httpMethod = "GET", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity findAvailabilitiesForGate(@ApiParam(value = "Gate number", required = true) @RequestParam @Valid Long gateId) {
+    public ResponseEntity findAvailabilitiesForGate(@ApiParam(value = "Gate number", required = true) @RequestParam @Valid Long gateId) throws Throwable {
         try {
             return gateService.listAllAvailabilities(gateId).get();
         } catch (InterruptedException | ExecutionException ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+            throw ex.getCause();
         }
     }
     

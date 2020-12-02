@@ -5,7 +5,7 @@
  */
 package com.mj.airport.dto;
 
-import javax.validation.constraints.NotBlank;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,8 +18,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GateDto {
+    
+    @ApiModelProperty(hidden = true)
     private Long id;
-    @NotBlank(message = "Gate number can not be empty")
     private String number;
     private boolean available;
 }

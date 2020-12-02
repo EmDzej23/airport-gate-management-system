@@ -44,22 +44,22 @@ public class FlightController {
     @PostMapping("/")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send POST request to create new flight based on airplane data", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity create(@ApiParam(value = "AirplaneDto model", required = true) @RequestBody @Valid AirplaneDto airplaneDto, @ApiParam(value = "Flight number", required = true) @RequestParam @Valid String number) {
+    public ResponseEntity create(@ApiParam(value = "AirplaneDto model", required = true) @RequestBody @Valid AirplaneDto airplaneDto, @ApiParam(value = "Flight number", required = true) @RequestParam @Valid String number) throws Throwable {
         try {
             return flightService.create(airplaneDto, number).get();
         } catch (InterruptedException | ExecutionException ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+            throw ex.getCause();
         }
     }
 
     @PostMapping("/assign-gate")
     @Secured(Constants.ADMIN)
     @ApiOperation(value = "Send POST request to assign particuler gate to the flight", httpMethod = "POST", code = 200, authorizations = @Authorization(value = "Authorization"))
-    public ResponseEntity assignGate(@ApiParam(value = "Flight number", required = true) @RequestParam @Valid String number) {
+    public ResponseEntity assignGate(@ApiParam(value = "Flight number", required = true) @RequestParam @Valid String number) throws Throwable {
         try {
             return flightService.assignFlightToGate(number).get();
         } catch (InterruptedException | ExecutionException ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+            throw ex.getCause();
         }
         
     }

@@ -61,7 +61,7 @@ public class ApiExceptionHandler {
     }
     
     @ExceptionHandler(AvailabilityBadTimesException.class)
-    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ResponseEntity handleAvailabilityBadTimesException(AvailabilityBadTimesException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiErrorDto(

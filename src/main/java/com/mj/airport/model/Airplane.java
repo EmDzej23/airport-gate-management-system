@@ -32,7 +32,7 @@ public class Airplane implements Serializable {
     @Column(name = "ID", unique = true)
     private Long id;
 
-    @Column(name = "model")
+    @Column(name = "model", unique = true)
     private String model;
 
 }

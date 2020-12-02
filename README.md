@@ -25,7 +25,7 @@ ALTER ROLE airport WITH LOGIN;
 
 *future logins to airport database:*
 
-If you choose mysql:
+If you choose mysql (under comments by default):
 
 After installing mysql server:
 

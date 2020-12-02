@@ -161,12 +161,11 @@ public class GateService {
     //Here we enter a list of availabilities for a gate
     //Some possible checks in a real system:
     ////check if entered start and end times are between existing ones
-    ////check if start time is after end time
     ////check if start time is after today
     ////check if there are flights reservations prepared in time we are setting
     public ResponseEntity insertAvailabilitiesForGate(List<AvailabilityDto> availabilities, Long gateId) throws AvailabilityBadTimesException {
         Gate gate = gateRepository.findById(gateId).get();
-        if (availabilities.stream().anyMatch(availability->availability.getStartTime().isBefore(availability.getEndTime()))) {
+        if (availabilities.stream().anyMatch(availability->availability.getStartTime().isAfter(availability.getEndTime()))) {
             throw new AvailabilityBadTimesException();
         }
         availabilities.stream().forEach(availability -> {

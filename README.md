@@ -38,7 +38,7 @@ checkout project with git clone...
 
 mvn clean install
 
-./mvnw spring-boot:run
+mvn spring-boot:run
 
 ## How to use swagger
 

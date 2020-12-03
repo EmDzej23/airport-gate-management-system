@@ -25,6 +25,8 @@ ALTER ROLE airport WITH LOGIN;
 
 *future logins to airport database:*
 
+psql -U airport
+
 If you choose mysql (under comments by default):
 
 After installing mysql server:
@@ -37,8 +39,6 @@ GRANT ALL PRIVILEGES ON airport.* to 'airport';
 ```
 
 *logout*
-
-psql -U airport
 
 database entities:
 - airplane (id, model)
@@ -85,15 +85,15 @@ hit Authorization button on swagger and fill it with "Bearer YOUR-TOKEN" and cli
 
 ## Project structure
 
-Configuration:
+- *Configuration:*
 - Auth: define rules for user login using jwt
 - Config: app configuration
 - Exception: global exception handle
-Api:
+- *API:*
 - Controller
-Logic:
+- *Logic:*
 - Service
-Data:
+- *Data:*
 - Dto
 - ModelMapper
 - Repo + Model
